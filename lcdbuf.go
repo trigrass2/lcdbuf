@@ -70,26 +70,20 @@ func PCFText(font *pcf.File, str string) (buf *Buf) {
 	return
 }
 
-func DrawOffset(orig, cur *Buf, x, y, offset int, pos func (x, y byte), dat func (b byte)) {
+func DrawOffset(orig, cur *Buf, x, y, offset int) {
 	for i := 0; i < cur.H/8; i++ {
-		if pos != nil {
-			pos(byte(x), byte(y/8+i))
-		}
 		for j := 0; j < cur.W && j+x<orig.W-1; j++ {
 			b := cur.Pix[i*cur.W+j+offset]
 			if oi := (y/8+i)*orig.W+j+x; oi < len(orig.Pix) {
 				orig.Pix[oi] = b
-			}
-			if dat != nil {
-				dat(b)
 			}
 		}
 	}
 	return
 }
 
-func Draw(orig, cur *Buf, x, y int, pos func (x, y byte), dat func (b byte)) {
-	DrawOffset(orig, cur, x, y, 0, pos, dat)
+func Draw(orig, cur *Buf, x, y int) {
+	DrawOffset(orig, cur, x, y, 0)
 }
 
 func (l *Buf) DrawHoriBits(x, y int, b []byte, w int) {
@@ -104,6 +98,12 @@ func (l *Buf) DrawHoriBits(x, y int, b []byte, w int) {
 			pv |= pm
 		}
 		l.Pix[pi] = pv
+	}
+}
+
+func (l *Buf) Inverse() {
+	for i := range l.Pix {
+		l.Pix[i] = ^l.Pix[i]
 	}
 }
 
