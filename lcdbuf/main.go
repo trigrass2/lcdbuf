@@ -9,7 +9,8 @@ import (
 
 func main() {
 	file := flag.String("f", "", "from image file")
-	tofile := flag.String("t", "", "to code file")
+	cfile := flag.String("to-c", "", "to C code file")
+	gofile := flag.String("to-go", "", "to Go code file")
 	flag.Parse()
 
 	buf, err := lcdbuf.FromImageFile(*file)
@@ -18,6 +19,11 @@ func main() {
 		return
 	}
 
-	buf.DumpCCode(*tofile)
+	if *cfile != "" {
+		buf.DumpCCode(*cfile)
+	}
+	if *gofile != "" {
+		buf.DumpGoCode(*gofile)
+	}
 }
 

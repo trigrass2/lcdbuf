@@ -113,6 +113,27 @@ func (l *Buf) Clear() {
 	}
 }
 
+func (l *Buf) DumpGoCode(fname string) {
+	f, err := os.Create(fname)
+	if err != nil {
+		return
+	}
+	fmt.Fprintf(f, "pic := lcdbuf.Buf{\n")
+	fmt.Fprintf(f, "  W: %d,\n", l.W)
+	fmt.Fprintf(f, "  H: %d,\n", l.H)
+	fmt.Fprintf(f, "  Pix: []byte{\n")
+	for i := 0; i < l.H/8; i++ {
+		fmt.Fprint(f, "    ")
+		for j := 0; j < l.W; j++ {
+			fmt.Fprintf(f, "0x%x,", l.Pix[i*l.W+j])
+		}
+		fmt.Fprint(f, "\n")
+	}
+	fmt.Fprintln(f, "  },")
+	fmt.Fprintln(f, "}")
+	f.Close()
+}
+
 func (l *Buf) DumpCCode(fname string) {
 	f, err := os.Create(fname)
 	if err != nil {
